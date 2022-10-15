@@ -1,0 +1,6 @@
+
+[workspace]
+members = [
+    "vec_n",
+]
+
