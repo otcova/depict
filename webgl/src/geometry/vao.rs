@@ -30,7 +30,7 @@ impl VAO {
         self.context.bind_vertex_array(Some(&self.vao));
         buffer.bind();
 
-        let mut stride = ShaderAttrib::count_bytes(attributes);
+        let stride = ShaderAttrib::count_bytes(attributes);
         let mut offset = 0;
         for attrib in attributes {
             attrib.vertex_attrib_pointer(&self.context, stride, offset);
@@ -58,10 +58,10 @@ impl VAO {
 impl ShaderAttrib {
     fn bytes_count(&self) -> i32 {
         match self {
-            ShaderAttrib::F32 { loc } => 4,
-            ShaderAttrib::VecF32 { loc, len } => len * 4,
-            ShaderAttrib::VecI32 { loc, len } => len * 4,
-            ShaderAttrib::MatF32 { loc, rows, cols } => rows * cols * 4,
+            ShaderAttrib::F32 { loc: _ } => 4,
+            ShaderAttrib::VecF32 { loc: _, len } => len * 4,
+            ShaderAttrib::VecI32 { loc: _, len } => len * 4,
+            ShaderAttrib::MatF32 { loc: _, rows, cols } => rows * cols * 4,
             ShaderAttrib::Offset { len } => *len,
         }
     }
@@ -103,35 +103,35 @@ impl ShaderAttrib {
                     );
                 }
             }
-            ShaderAttrib::Offset { len } => {}
+            ShaderAttrib::Offset { len: _ } => {}
         }
     }
 
     fn vertex_attrib_divisor(&self, ctx: &WebGl2RenderingContext, divisor: u32) {
         match self {
             ShaderAttrib::F32 { loc } => ctx.vertex_attrib_divisor(*loc, divisor),
-            ShaderAttrib::VecF32 { loc, len } => ctx.vertex_attrib_divisor(*loc, divisor),
-            ShaderAttrib::VecI32 { loc, len } => ctx.vertex_attrib_divisor(*loc, divisor),
-            ShaderAttrib::MatF32 { loc, rows, cols } => {
+            ShaderAttrib::VecF32 { loc, len: _ } => ctx.vertex_attrib_divisor(*loc, divisor),
+            ShaderAttrib::VecI32 { loc, len: _ } => ctx.vertex_attrib_divisor(*loc, divisor),
+            ShaderAttrib::MatF32 { loc, rows, cols: _ } => {
                 for row in 0..*rows {
                     ctx.vertex_attrib_divisor(loc + row as u32, divisor);
                 }
             }
-            ShaderAttrib::Offset { len } => {}
+            ShaderAttrib::Offset { len: _ } => {}
         }
     }
 
     fn enable_vertex_attrib_array(&self, ctx: &WebGl2RenderingContext) {
         match self {
             ShaderAttrib::F32 { loc } => ctx.enable_vertex_attrib_array(*loc),
-            ShaderAttrib::VecF32 { loc, len } => ctx.enable_vertex_attrib_array(*loc),
-            ShaderAttrib::VecI32 { loc, len } => ctx.enable_vertex_attrib_array(*loc),
-            ShaderAttrib::MatF32 { loc, rows, cols } => {
+            ShaderAttrib::VecF32 { loc, len: _ } => ctx.enable_vertex_attrib_array(*loc),
+            ShaderAttrib::VecI32 { loc, len: _ } => ctx.enable_vertex_attrib_array(*loc),
+            ShaderAttrib::MatF32 { loc, rows, cols: _ } => {
                 for row in 0..*rows {
                     ctx.enable_vertex_attrib_array(loc + row as u32);
                 }
             }
-            ShaderAttrib::Offset { len } => {}
+            ShaderAttrib::Offset { len: _ } => {}
         }
     }
 

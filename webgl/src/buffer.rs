@@ -1,40 +1,49 @@
+use std::{cell::RefCell, rc::Rc};
+
 use crate::*;
 use js_sys::{Float32Array, Int32Array};
 use web_sys::*;
 
-pub type ArrayBuffer = Buffer<{WebGl2RenderingContext::ARRAY_BUFFER}>;
-pub type ElementBuffer = Buffer<{WebGl2RenderingContext::ELEMENT_ARRAY_BUFFER}>;
+pub type ArrayBuffer = Buffer<{ WebGl2RenderingContext::ARRAY_BUFFER }>;
+pub type ElementBuffer = Buffer<{ WebGl2RenderingContext::ELEMENT_ARRAY_BUFFER }>;
 
-pub struct Buffer<const T: u32> {
+struct RawBuffer {
     ctx: WebGl2RenderingContext,
-    buffer: WebGlBuffer,
-    len: usize,
+    handle: WebGlBuffer,
+    len: RefCell<usize>,
+}
+
+#[derive(Clone)]
+pub struct Buffer<const T: u32> {
+    raw: Rc<RawBuffer>,
 }
 
 impl WebGl {
     pub fn new_buffer<const T: u32>(&self) -> Result<Buffer<T>> {
         Ok(Buffer {
-            ctx: self.ctx.clone(),
-            buffer: self
-                .ctx
-                .create_buffer()
-                .ok_or("Unable to create gl buffer")?,
-            len: 0,
+            raw: Rc::new(RawBuffer {
+                ctx: self.ctx.clone(),
+                handle: self
+                    .ctx
+                    .create_buffer()
+                    .ok_or("Unable to create gl buffer")?,
+                len: RefCell::new(0),
+            }),
         })
     }
 }
 
 impl<const T: u32> Buffer<T> {
     pub(crate) fn bind(&self) {
-        self.ctx.bind_buffer(T, Some(&self.buffer));
+        self.raw.ctx.bind_buffer(T, Some(&self.raw.handle));
     }
 
     pub fn len(&self) -> usize {
-        self.len
+        *self.raw.len.borrow()
     }
 
     pub fn update_i32(&mut self, data: &[i32]) {
-        if self.len < data.len() {
+        if self.len() < data.len() {
             self.allocate_i32(data, WebGl2RenderingContext::DYNAMIC_DRAW);
         } else {
             self.update_slice_i32(data, 0);
@@ -42,7 +51,7 @@ impl<const T: u32> Buffer<T> {
     }
 
     pub fn update_f32(&mut self, data: &[f32]) {
-        if self.len < data.len() {
+        if self.len() < data.len() {
             self.allocate_f32(data, WebGl2RenderingContext::DYNAMIC_DRAW);
         } else {
             self.update_slice_f32(data, 0);
@@ -67,11 +76,9 @@ impl<const T: u32> Buffer<T> {
     pub fn update_slice(&self, data: &js_sys::Object, dst_byte_offset: i32) {
         self.bind();
 
-        self.ctx.buffer_sub_data_with_i32_and_array_buffer_view(
-            T,
-            dst_byte_offset,
-            data,
-        );
+        self.raw
+            .ctx
+            .buffer_sub_data_with_i32_and_array_buffer_view(T, dst_byte_offset, data);
     }
 
     fn allocate_i32(&mut self, data: &[i32], usage: u32) {
@@ -81,16 +88,17 @@ impl<const T: u32> Buffer<T> {
         into_js_f32_array(data, |array| self.allocate(&array, data.len(), usage));
     }
     fn allocate(&mut self, data: &js_sys::Object, data_len: usize, usage: u32) {
-        self.len = data_len;
+        *self.raw.len.borrow_mut() = data_len;
         self.bind();
-        self.ctx
+        self.raw
+            .ctx
             .buffer_data_with_array_buffer_view(T, data, usage);
     }
 }
 
-impl<const T: u32> Drop for Buffer<T> {
+impl Drop for RawBuffer {
     fn drop(&mut self) {
-        self.ctx.delete_buffer(Some(&self.buffer));
+        self.ctx.delete_buffer(Some(&self.handle));
     }
 }
 
