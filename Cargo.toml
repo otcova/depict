@@ -2,5 +2,7 @@
 [workspace]
 members = [
     "vec_n",
+    "webgl",
+    "examples/demo",
 ]
 
