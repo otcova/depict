@@ -13,7 +13,7 @@ impl WebGl {
     pub fn instanced_mesh_from_verts(
         &self,
         verts: &ArrayBuffer,
-        instances: &ArrayBuffer, 
+        instances: &ArrayBuffer,
     ) -> Result<MeshInstancedVerts> {
         let vao = VAO::new(&self.ctx)?;
         vao.link_buffer(verts);

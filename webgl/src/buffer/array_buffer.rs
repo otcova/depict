@@ -26,10 +26,7 @@ impl ArrayBuffer {
 }
 
 impl WebGl {
-    pub fn new_array_buffer(
-        &self,
-        attribs: &'static [ShaderAttrib],
-    ) -> Result<ArrayBuffer> {
-		Ok(ArrayBuffer(Buffer::new(self)?, attribs))
+    pub fn new_array_buffer(&self, attribs: &'static [ShaderAttrib]) -> Result<ArrayBuffer> {
+        Ok(ArrayBuffer(Buffer::new(self)?, attribs))
     }
 }

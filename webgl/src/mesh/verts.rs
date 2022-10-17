@@ -9,10 +9,7 @@ pub struct MeshVerts {
 }
 
 impl WebGl {
-    pub fn mesh_from_verts(
-        &self,
-        verts: &ArrayBuffer,
-    ) -> Result<MeshVerts> {
+    pub fn mesh_from_verts(&self, verts: &ArrayBuffer) -> Result<MeshVerts> {
         let vao = VAO::new(&self.ctx)?;
         vao.link_buffer(verts);
         Ok(MeshVerts {

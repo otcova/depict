@@ -4,10 +4,10 @@ use std::ops::{Deref, DerefMut};
 pub struct Mat3x2(pub [f32; 6]);
 
 impl<V: Into<Vec2>> From<V> for Mat3x2 {
-	fn from(size: V) -> Self {
-		let vec2 = size.into();
-		Mat3x2([vec2.x, 0., 0., 0., vec2.y, 0.])
-	}
+    fn from(size: V) -> Self {
+        let vec2 = size.into();
+        Mat3x2([vec2.x, 0., 0., 0., vec2.y, 0.])
+    }
 }
 
 #[macro_export]

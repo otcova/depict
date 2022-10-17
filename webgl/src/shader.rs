@@ -21,7 +21,7 @@ impl Shader {
     pub(crate) fn bind(&self) {
         self.ctx.use_program(Some(&self.program));
     }
-    
+
     pub fn set_uniform(&self, name: &str, value: Uniform) {
         self.bind();
         let location = self.ctx.get_uniform_location(&self.program, name);

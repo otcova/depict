@@ -40,7 +40,7 @@ impl<const T: u32> Buffer<T> {
 
     pub fn len(&self) -> i32 {
         *self.raw.len.borrow() as i32
-     }
+    }
 
     pub fn update_i32(&mut self, data: &[i32]) {
         if self.len() < data.len() as i32 {

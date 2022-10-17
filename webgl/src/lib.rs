@@ -1,19 +1,19 @@
 mod buffer;
-mod geometry;
+mod mesh;
 mod shader;
 
 pub use buffer::*;
-pub use geometry::*;
+pub use mesh::*;
 pub use shader::*;
 
-use web_sys::*;
 use wasm_bindgen::*;
+use web_sys::*;
 
 type Result<T> = std::result::Result<T, String>;
 
 pub struct WebGl {
     ctx: WebGl2RenderingContext,
-    _canvas: HtmlCanvasElement,
+    canvas: HtmlCanvasElement,
 }
 
 impl WebGl {
@@ -25,14 +25,23 @@ impl WebGl {
             .ok_or("Coudn't get webgl2 context")?
             .dyn_into::<WebGl2RenderingContext>()
             .map_err(|e| format!("Couldn't get webgl2 context. {:?}", e))?;
-        ctx.enable(WebGl2RenderingContext::DEPTH_TEST);
+        // ctx.enable(WebGl2RenderingContext::DEPTH_TEST);
 
-        Ok(Self { ctx, _canvas: canvas })
+        Ok(Self { ctx, canvas })
     }
-    
+
     pub fn clear_canvas(&self, color: [f32; 4]) {
         self.ctx.clear_color(color[0], color[1], color[2], color[3]);
         self.ctx.clear(WebGl2RenderingContext::COLOR_BUFFER_BIT);
+        // self.ctx.clear(WebGl2RenderingContext::DEPTH_BUFFER_BIT);
+    }
+
+    pub fn width(&self) -> f32 {
+        self.canvas.width() as f32
+    }
+
+    pub fn height(&self) -> f32 {
+        self.canvas.height() as f32
     }
 }
 

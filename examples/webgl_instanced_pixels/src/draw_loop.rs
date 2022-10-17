@@ -15,7 +15,8 @@ pub fn get_current_time() -> Result<f32, String> {
         .performance()
         .ok_or("Couldn't get window.performance")?
         .now() as f32
-        / 1000.).into()
+        / 1000.)
+    .into()
 }
 
 pub fn start_draw_loop<F>(mut draw_loop: F) -> Result<(), String>
@@ -57,12 +58,13 @@ where
             if render_time_store_index >= render_time_store.len() {
                 render_time_store_index = 0;
             }
-            
+
             render_average = render_time_store.iter().sum::<f32>()
                 / render_time_store.len().min(frame_count as usize) as f32;
-                
+
             request_animation_frame(f.borrow().as_ref().unwrap())
-        })().unwrap();
+        })()
+        .unwrap();
     }) as Box<dyn FnMut()>));
 
     request_animation_frame(g.borrow().as_ref().unwrap())?;
