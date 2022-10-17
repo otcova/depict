@@ -74,34 +74,19 @@ impl Vec3 {
     }
 }
 
-impl Div<f32> for Vec3 {
+// Vec3 operations
+impl Neg for Vec3 {
     type Output = Vec3;
 
-    fn div(self, rhs: f32) -> Vec3 {
-        vec3![self.x / rhs, self.y / rhs, self.z / rhs]
+    fn neg(self) -> Self::Output {
+        vec3![-self.x, -self.y, -self.z]
     }
 }
-
-impl Div for Vec3 {
+impl Add for Vec3 {
     type Output = Vec3;
 
-    fn div(self, rhs: Self) -> Vec3 {
-        vec3![self.x / rhs.x, self.y / rhs.y, self.z / rhs.z]
-    }
-}
-impl Mul for Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, rhs: Self) -> Vec3 {
-        vec3![self.x * rhs.x, self.y * rhs.y, self.z * rhs.z]
-    }
-}
-
-impl Mul<f32> for Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, rhs: f32) -> Vec3 {
-        vec3![self.x * rhs, self.y * rhs, self.z * rhs]
+    fn add(self, rhs: Self) -> Self::Output {
+        vec3![self.x + rhs.x, self.y + rhs.y, self.z + rhs.z]
     }
 }
 impl Sub for Vec3 {
@@ -111,19 +96,47 @@ impl Sub for Vec3 {
         vec3![self.x - rhs.x, self.y - rhs.y, self.z - rhs.z]
     }
 }
-
-impl Add for Vec3 {
+impl Mul for Vec3 {
     type Output = Vec3;
 
-    fn add(self, rhs: Self) -> Self::Output {
-        vec3![self.x + rhs.x, self.y + rhs.y, self.z + rhs.z]
+    fn mul(self, rhs: Self) -> Vec3 {
+        vec3![self.x * rhs.x, self.y * rhs.y, self.z * rhs.z]
+    }
+}
+impl Div for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: Self) -> Vec3 {
+        vec3![self.x / rhs.x, self.y / rhs.y, self.z / rhs.z]
     }
 }
 
-impl Neg for Vec3 {
+// Vec3 with f32 operations
+impl Add<f32> for Vec3 {
     type Output = Vec3;
 
-    fn neg(self) -> Self::Output {
-        vec3![-self.x, -self.y, -self.z]
+    fn add(self, rhs: f32) -> Vec3 {
+        vec3![self.x + rhs, self.y + rhs, self.z + rhs]
+    }
+}
+impl Sub<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: f32) -> Vec3 {
+        vec3![self.x - rhs, self.y - rhs, self.z - rhs]
+    }
+}
+impl Mul<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: f32) -> Vec3 {
+        vec3![self.x * rhs, self.y * rhs, self.z * rhs]
+    }
+}
+impl Div<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f32) -> Vec3 {
+        vec3![self.x / rhs, self.y / rhs, self.z / rhs]
     }
 }

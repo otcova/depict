@@ -68,34 +68,19 @@ impl Vec2 {
     }
 }
 
-impl Div<f32> for Vec2 {
+// Vec2 Operations
+impl Neg for Vec2 {
     type Output = Vec2;
 
-    fn div(self, rhs: f32) -> Vec2 {
-        vec2![self.x / rhs, self.y / rhs]
+    fn neg(self) -> Self::Output {
+        vec2![-self.x, -self.y]
     }
 }
-
-impl Div for Vec2 {
+impl Add for Vec2 {
     type Output = Vec2;
 
-    fn div(self, rhs: Self) -> Vec2 {
-        vec2![self.x / rhs.x, self.y / rhs.y]
-    }
-}
-impl Mul for Vec2 {
-    type Output = Vec2;
-
-    fn mul(self, rhs: Self) -> Vec2 {
-        vec2![self.x * rhs.x, self.y * rhs.y]
-    }
-}
-
-impl Mul<f32> for Vec2 {
-    type Output = Vec2;
-
-    fn mul(self, rhs: f32) -> Vec2 {
-        vec2![self.x * rhs, self.y * rhs]
+    fn add(self, rhs: Self) -> Self::Output {
+        vec2![self.x + rhs.x, self.y + rhs.y]
     }
 }
 impl Sub for Vec2 {
@@ -105,19 +90,47 @@ impl Sub for Vec2 {
         vec2![self.x - rhs.x, self.y - rhs.y]
     }
 }
-
-impl Add for Vec2 {
+impl Mul for Vec2 {
     type Output = Vec2;
 
-    fn add(self, rhs: Self) -> Self::Output {
-        vec2![self.x + rhs.x, self.y + rhs.y]
+    fn mul(self, rhs: Self) -> Vec2 {
+        vec2![self.x * rhs.x, self.y * rhs.y]
+    }
+}
+impl Div for Vec2 {
+    type Output = Vec2;
+
+    fn div(self, rhs: Self) -> Vec2 {
+        vec2![self.x / rhs.x, self.y / rhs.y]
     }
 }
 
-impl Neg for Vec2 {
+// Vec2 with f32 operations
+impl Add<f32> for Vec2 {
     type Output = Vec2;
 
-    fn neg(self) -> Self::Output {
-        vec2![-self.x, -self.y]
+    fn add(self, rhs: f32) -> Vec2 {
+        vec2![self.x + rhs, self.y + rhs]
+    }
+}
+impl Sub<f32> for Vec2 {
+    type Output = Vec2;
+
+    fn sub(self, rhs: f32) -> Self::Output {
+        vec2![self.x - rhs, self.y - rhs]
+    }
+}
+impl Mul<f32> for Vec2 {
+    type Output = Vec2;
+
+    fn mul(self, rhs: f32) -> Vec2 {
+        vec2![self.x * rhs, self.y * rhs]
+    }
+}
+impl Div<f32> for Vec2 {
+    type Output = Vec2;
+
+    fn div(self, rhs: f32) -> Vec2 {
+        vec2![self.x / rhs, self.y / rhs]
     }
 }
