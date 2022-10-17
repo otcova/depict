@@ -1,3 +1,5 @@
+use std::mem::size_of;
+
 use crate::*;
 use web_sys::*;
 
@@ -11,7 +13,7 @@ pub enum ShaderAttrib {
     F32 { loc: u32 },
     VecF32 { loc: u32, len: i32 },
     VecI32 { loc: u32, len: i32 },
-    MatF32 { loc: u32, rows: i32, cols: i32 },
+    MatF32 { loc: u32, cols: i32, rows: i32 },
     Offset { len: i32 },
 }
 
@@ -26,13 +28,13 @@ impl VAO {
         })
     }
 
-    pub(crate) fn link_instance_buffer(&self, buffer: &ArrayBuffer, attributes: &[ShaderAttrib]) {
+    pub(crate) fn link_instance_buffer(&self, buffer: &ArrayBuffer) {
         self.context.bind_vertex_array(Some(&self.vao));
         buffer.bind();
 
-        let stride = ShaderAttrib::count_bytes(attributes);
+        let stride = ShaderAttrib::count_bytes(buffer.attribs());
         let mut offset = 0;
-        for attrib in attributes {
+        for attrib in buffer.attribs() {
             attrib.vertex_attrib_pointer(&self.context, stride, offset);
             attrib.vertex_attrib_divisor(&self.context, 1);
             attrib.enable_vertex_attrib_array(&self.context);
@@ -40,13 +42,13 @@ impl VAO {
             offset += attrib.bytes_count();
         }
     }
-    pub(crate) fn link_buffer(&self, buffer: &ArrayBuffer, attributes: &[ShaderAttrib]) {
+    pub(crate) fn link_buffer(&self, buffer: &ArrayBuffer) {
         self.context.bind_vertex_array(Some(&self.vao));
         buffer.bind();
 
-        let stride = ShaderAttrib::count_bytes(attributes);
+        let stride = ShaderAttrib::count_bytes(buffer.attribs());
         let mut offset = 0;
-        for attrib in attributes {
+        for attrib in buffer.attribs() {
             attrib.vertex_attrib_pointer(&self.context, stride, offset);
             attrib.enable_vertex_attrib_array(&self.context);
 
@@ -92,14 +94,14 @@ impl ShaderAttrib {
                 offset,
             ),
             ShaderAttrib::MatF32 { loc, rows, cols } => {
-                for row in 0..*rows {
+                for col in 0..*cols {
                     ctx.vertex_attrib_pointer_with_i32(
-                        loc + row as u32,
-                        *cols,
+                        *loc + (col as u32),
+                        *rows,
                         WebGl2RenderingContext::FLOAT,
                         false,
                         stride,
-                        offset + row * cols * 4,
+                        offset + col * rows * 4,
                     );
                 }
             }
@@ -112,9 +114,9 @@ impl ShaderAttrib {
             ShaderAttrib::F32 { loc } => ctx.vertex_attrib_divisor(*loc, divisor),
             ShaderAttrib::VecF32 { loc, len: _ } => ctx.vertex_attrib_divisor(*loc, divisor),
             ShaderAttrib::VecI32 { loc, len: _ } => ctx.vertex_attrib_divisor(*loc, divisor),
-            ShaderAttrib::MatF32 { loc, rows, cols: _ } => {
-                for row in 0..*rows {
-                    ctx.vertex_attrib_divisor(loc + row as u32, divisor);
+            ShaderAttrib::MatF32 { loc, cols, rows: _ } => {
+                for col in 0..*cols {
+                    ctx.vertex_attrib_divisor(loc + col as u32, divisor);
                 }
             }
             ShaderAttrib::Offset { len: _ } => {}
@@ -126,9 +128,9 @@ impl ShaderAttrib {
             ShaderAttrib::F32 { loc } => ctx.enable_vertex_attrib_array(*loc),
             ShaderAttrib::VecF32 { loc, len: _ } => ctx.enable_vertex_attrib_array(*loc),
             ShaderAttrib::VecI32 { loc, len: _ } => ctx.enable_vertex_attrib_array(*loc),
-            ShaderAttrib::MatF32 { loc, rows, cols: _ } => {
-                for row in 0..*rows {
-                    ctx.enable_vertex_attrib_array(loc + row as u32);
+            ShaderAttrib::MatF32 { loc, cols, rows: _ } => {
+                for col in 0..*cols {
+                    ctx.enable_vertex_attrib_array(loc + col as u32);
                 }
             }
             ShaderAttrib::Offset { len: _ } => {}
@@ -141,6 +143,9 @@ impl ShaderAttrib {
             stride += attrib.bytes_count();
         }
         stride
+    }
+    pub(crate) fn count_floats(attributes: &[Self]) -> i32 {
+        Self::count_bytes(attributes) / size_of::<f32>() as i32
     }
 }
 

@@ -2,21 +2,21 @@ use crate::*;
 
 use super::vao::VAO;
 
-pub struct GeometryVertsAndIndices {
+pub struct MeshVertsAndIndices {
     ctx: WebGl2RenderingContext,
     vao: VAO,
     indices: ElementBuffer,
 }
 
 impl WebGl {
-    pub fn triangles_from_verts_and_indices(
+    pub fn mesh_from_verts_and_indices(
         &self,
-        verts: (&ArrayBuffer, &[ShaderAttrib]),
+        verts: &ArrayBuffer,
         indices: &ElementBuffer,
-    ) -> Result<GeometryVertsAndIndices> {
+    ) -> Result<MeshVertsAndIndices> {
         let vao = VAO::new(&self.ctx)?;
-        vao.link_buffer(verts.0, verts.1);
-        Ok(GeometryVertsAndIndices {
+        vao.link_buffer(verts);
+        Ok(MeshVertsAndIndices {
             ctx: self.ctx.clone(),
             vao,
             indices: indices.clone(),
@@ -24,7 +24,7 @@ impl WebGl {
     }
 }
 
-impl GeometryVertsAndIndices {
+impl MeshVertsAndIndices {
     pub fn draw(&self, shader: &Shader) {
         shader.bind();
         self.vao.bind();
