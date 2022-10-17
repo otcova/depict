@@ -40,7 +40,6 @@ void main() {
 }
 "##;
 
-
 pub const VERTEX_SOURCE3: &str = r##"#version 300 es
 precision highp float;
 

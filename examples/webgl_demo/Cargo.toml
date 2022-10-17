@@ -1,5 +1,5 @@
 [package]
-name = "demo"
+name = "webgl_demo"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,4 +7,5 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-depict = { path = "../../depict" }
+wasm-bindgen = "0.2.83"
+webgl = { path = "../../webgl" }

@@ -1,8 +1,15 @@
 
 [workspace]
 members = [
-    "vec_n",
+    "vecn",
     "webgl",
+    "depict",
+    "examples/webgl_demo",
     "examples/demo",
+    "examples/webgl_instanced_pixels"
 ]
 
+[profile.release]
+opt-level = 's'
+lto = true
+codegen-units = 1

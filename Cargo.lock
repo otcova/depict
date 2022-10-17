@@ -18,7 +18,14 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 name = "demo"
 version = "0.1.0"
 dependencies = [
- "vec_n",
+ "depict",
+]
+
+[[package]]
+name = "depict"
+version = "0.1.0"
+dependencies = [
+ "vecn",
  "wasm-bindgen",
  "webgl",
 ]
@@ -83,7 +90,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ceab39d59e4c9499d4e5a8ee0e2735b891bb7308ac83dfb4e80cad195c9f6f3"
 
 [[package]]
-name = "vec_n"
+name = "vecn"
 version = "0.1.0"
 
 [[package]]
@@ -157,4 +164,21 @@ dependencies = [
  "js-sys",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "webgl_demo"
+version = "0.1.0"
+dependencies = [
+ "wasm-bindgen",
+ "webgl",
+]
+
+[[package]]
+name = "webgl_instanced_pixels"
+version = "0.1.0"
+dependencies = [
+ "wasm-bindgen",
+ "web-sys",
+ "webgl",
 ]
