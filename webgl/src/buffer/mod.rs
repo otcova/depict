@@ -1,11 +1,14 @@
+mod array_buffer;
+mod element_buffer;
+
+pub use array_buffer::*;
+pub use element_buffer::*;
+
 use std::{cell::RefCell, rc::Rc};
 
 use crate::*;
 use js_sys::{Float32Array, Int32Array};
 use web_sys::*;
-
-pub type ArrayBuffer = Buffer<{ WebGl2RenderingContext::ARRAY_BUFFER }>;
-pub type ElementBuffer = Buffer<{ WebGl2RenderingContext::ELEMENT_ARRAY_BUFFER }>;
 
 struct RawBuffer {
     ctx: WebGl2RenderingContext,
@@ -18,15 +21,12 @@ pub struct Buffer<const T: u32> {
     raw: Rc<RawBuffer>,
 }
 
-impl WebGl {
-    pub fn new_buffer<const T: u32>(&self) -> Result<Buffer<T>> {
+impl<const T: u32> Buffer<T> {
+    fn new(gl: &WebGl) -> Result<Self> {
         Ok(Buffer {
             raw: Rc::new(RawBuffer {
-                ctx: self.ctx.clone(),
-                handle: self
-                    .ctx
-                    .create_buffer()
-                    .ok_or("Unable to create gl buffer")?,
+                ctx: gl.ctx.clone(),
+                handle: gl.ctx.create_buffer().ok_or("Unable to create gl buffer")?,
                 len: RefCell::new(0),
             }),
         })
@@ -38,12 +38,12 @@ impl<const T: u32> Buffer<T> {
         self.raw.ctx.bind_buffer(T, Some(&self.raw.handle));
     }
 
-    pub fn len(&self) -> usize {
-        *self.raw.len.borrow()
-    }
+    pub fn len(&self) -> i32 {
+        *self.raw.len.borrow() as i32
+     }
 
     pub fn update_i32(&mut self, data: &[i32]) {
-        if self.len() < data.len() {
+        if self.len() < data.len() as i32 {
             self.allocate_i32(data, WebGl2RenderingContext::DYNAMIC_DRAW);
         } else {
             self.update_slice_i32(data, 0);
@@ -51,7 +51,7 @@ impl<const T: u32> Buffer<T> {
     }
 
     pub fn update_f32(&mut self, data: &[f32]) {
-        if self.len() < data.len() {
+        if self.len() < data.len() as i32 {
             self.allocate_f32(data, WebGl2RenderingContext::DYNAMIC_DRAW);
         } else {
             self.update_slice_f32(data, 0);
