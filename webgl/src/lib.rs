@@ -9,7 +9,7 @@ pub use shader::*;
 
 use wasm_bindgen::*;
 use web_sys::*;
-// use web::*;
+use web::*;
 
 type Result<T> = std::result::Result<T, String>;
 
@@ -48,18 +48,13 @@ impl WebGl {
 }
 
 fn load_canvas() -> Result<HtmlCanvasElement> {
-    let win = window().ok_or("Couldn't get window")?;
-    let document = win.document().ok_or("Couldn't get document")?;
-
-    let canvas = document
-        .get_element_by_id("canvas")
-        .ok_or("Couldn't get canvas")?;
+    let canvas = Document::get_element_by_id("canvas").ok_or("Couldn't get canvas")?;
     let canvas: HtmlCanvasElement = canvas
         .dyn_into::<HtmlCanvasElement>()
         .map_err(|e| format!("Invalid canvas. {:?}", e))?;
 
-    canvas.set_width(win.inner_width().unwrap().as_f64().unwrap() as u32);
-    canvas.set_height(win.inner_height().unwrap().as_f64().unwrap() as u32);
+    canvas.set_width(Window::inner_width().as_f64().ok_or("Could not get inner width")? as u32);
+    canvas.set_height(Window::inner_height().as_f64().ok_or("Could not get inner height")? as u32);
 
     Ok(canvas)
 }

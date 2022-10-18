@@ -1,10 +1,10 @@
-// CODE FROM WEB-SYS
+use super::*;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    # [wasm_bindgen (extends = ::js_sys::Object)]
-    #[derive(Debug, Clone, PartialEq)]
+    # [wasm_bindgen (extends = Element, extends = ::js_sys::Object , js_name = HTMLCanvasElement , typescript_type = "HTMLCanvasElement")]
+    #[derive(Debug, Clone, PartialEq, Eq)]
     #[doc = "The `HtmlCanvasElement` class."]
     #[doc = ""]
     #[doc = "[MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement)"]

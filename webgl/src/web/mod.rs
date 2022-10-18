@@ -1,8 +1,8 @@
-mod webgl2;
+// REDUCED CODE FROM WEB-SYS
 mod canvas;
 mod window;
-pub mod document;
+mod document;
 
+pub use document::*;
 pub use window::*;
 pub use canvas::*;
-pub use webgl2::*;
