@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, Deref, Div, Mul, Neg, Sub, DerefMut};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vec2 {
@@ -14,6 +14,19 @@ macro_rules! vec2 {
     ($elem: expr) => {
         $crate::Vec2::from($elem)
     };
+}
+
+impl Deref for Vec2 {
+    type Target = [f32; 2];
+    fn deref(&self) -> &Self::Target {
+        unsafe { std::mem::transmute(self) }
+    }
+}
+
+impl DerefMut for Vec2 {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        unsafe { std::mem::transmute(self) }
+    }
 }
 
 impl From<&[f32; 2]> for Vec2 {
