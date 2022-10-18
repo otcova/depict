@@ -1,6 +1,7 @@
 mod buffer;
 mod mesh;
 mod shader;
+mod web;
 
 pub use buffer::*;
 pub use mesh::*;
@@ -8,6 +9,7 @@ pub use shader::*;
 
 use wasm_bindgen::*;
 use web_sys::*;
+// use web::*;
 
 type Result<T> = std::result::Result<T, String>;
 
