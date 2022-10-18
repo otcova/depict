@@ -1,0 +1,9 @@
+[package]
+name = "depict"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+webgl = { path = "../webgl" }
+vecn = { path = "../vecn" }
+wasm-bindgen = "0.2.83"
