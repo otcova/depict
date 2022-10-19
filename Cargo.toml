@@ -6,7 +6,8 @@ members = [
     "depict",
     "examples/webgl_demo",
     "examples/demo",
-    "examples/webgl_instanced_pixels"
+    "examples/webgl_instanced_pixels",
+    "examples/instanced_pixels",
 ]
 
 [profile.release]

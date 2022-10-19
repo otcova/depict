@@ -31,6 +31,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "instanced_pixels"
+version = "0.1.0"
+dependencies = [
+ "depict",
+]
+
+[[package]]
 name = "js-sys"
 version = "0.3.60"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -179,6 +186,5 @@ name = "webgl_instanced_pixels"
 version = "0.1.0"
 dependencies = [
  "wasm-bindgen",
- "web-sys",
  "webgl",
 ]
