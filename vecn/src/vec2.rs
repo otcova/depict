@@ -1,4 +1,4 @@
-use std::ops::{Add, Deref, Div, Mul, Neg, Sub, DerefMut};
+use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vec2 {

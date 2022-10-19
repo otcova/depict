@@ -1,5 +1,8 @@
 use crate::*;
-use std::{ops::{Deref, DerefMut}, f32::consts::PI};
+use std::{
+    f32::consts::PI,
+    ops::{Deref, DerefMut},
+};
 
 /// Column major matrix
 pub struct Mat3x2(pub [f32; 6]);
@@ -19,7 +22,7 @@ macro_rules! mat3x2 {
     ($m: expr) => {
         Mat3x2::from($m)
     };
-    ($a: literal, $b: literal, $c: literal, $d: literal, $e: literal, $f: literal) => {
+    ($a: expr, $b: expr, $c: expr, $d: expr, $e: expr, $f: expr) => {
         Mat3x2([$a, $b, $c, $d, $e, $f])
     };
 }
@@ -52,7 +55,7 @@ impl Mat3x2 {
         let m21 = self.0[1];
         let m12 = self.0[2];
         let m22 = self.0[3];
-        
+
         self.0[0] = m11 * cos - m12 * sin;
         self.0[1] = m21 * cos - m22 * sin;
         self.0[2] = m11 * sin + m12 * cos;
@@ -64,7 +67,7 @@ impl Mat3x2 {
     pub fn rotate_deg(&mut self, angle: f32) -> &mut Self {
         self.rotate_rad(angle * PI / 180.)
     }
-    
+
     pub fn scale<V: Into<Vec2>>(&mut self, size: V) -> &mut Self {
         let vec = size.into();
         self.0[0] *= vec.x;
