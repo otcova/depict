@@ -1,9 +1,10 @@
 mod console;
-mod draw_loop;
+mod request_frame;
 mod shaders;
+mod time;
 
-use draw_loop::start_draw_loop;
-use draw_loop::*;
+use request_frame::start_animation_loop;
+use time::*;
 use wasm_bindgen::prelude::*;
 use webgl::*;
 
@@ -41,35 +42,39 @@ pub fn setup() -> Result<(), String> {
 
     let rect = gl.instanced_mesh_from_verts(&vertices, &instances)?;
 
-    let draw_frame = move |time: FrameTime| -> Result<(), String> {
+    let mut time = FrameTime::new();
+
+    let draw_frame = move || {
+        time.start_frame();
+        
         const N: f32 = 500.;
         for x in (-N as i32)..=(N as i32) {
             for y in (-N as i32)..=(N as i32) {
-                instances_data.extend_from_slice(&[
+                let data = [
                     1. * (time.seconds * 10. + x as f32 / 10.).sin(),
-                    0.2 * (0.5 + time.seconds * 10. + y as f32 / 10.).sin(),
+                    0.5 * (0.5 + time.seconds * 10. + y as f32 / 10.).sin(),
                     0.,
-                    1. / N,
+                    1. / 500.,
                     0.,
                     0.,
-                    1. / N,
+                    1. / 500.,
                     x as f32 / N,
                     y as f32 / N,
-                ]);
+                ];
+                instances_data.extend_from_slice(&data);
             }
         }
 
+        gl.clear_canvas([0.1, 0.1, 0.1, 1.]);
         instances.update_f32(&instances_data);
+        rect.draw(&shader);
         instances_data.truncate(0);
 
-        gl.clear_canvas([0.1, 0.1, 0.1, 1.]);
-        rect.draw(&shader);
-
-        console::log!("deltatime: {}ms", time.render_average * 1000.);
-        Ok(())
+        time.end_frame();
+        console::log!("{}ms", time.delta_seconds.average() * 1000.);
     };
 
-    start_draw_loop(draw_frame)?;
+    start_animation_loop(draw_frame);
 
     Ok(())
 }
