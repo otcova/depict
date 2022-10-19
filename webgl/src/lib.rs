@@ -8,8 +8,8 @@ pub use mesh::*;
 pub use shader::*;
 
 use wasm_bindgen::*;
-use web_sys::*;
 use web::*;
+use web_sys::*;
 
 type Result<T> = std::result::Result<T, String>;
 
@@ -53,8 +53,16 @@ fn load_canvas() -> Result<HtmlCanvasElement> {
         .dyn_into::<HtmlCanvasElement>()
         .map_err(|e| format!("Invalid canvas. {:?}", e))?;
 
-    canvas.set_width(Window::inner_width().as_f64().ok_or("Could not get inner width")? as u32);
-    canvas.set_height(Window::inner_height().as_f64().ok_or("Could not get inner height")? as u32);
+    canvas.set_width(
+        web::Window::inner_width()
+            .as_f64()
+            .ok_or("Could not get inner width")? as u32,
+    );
+    canvas.set_height(
+        web::Window::inner_height()
+            .as_f64()
+            .ok_or("Could not get inner height")? as u32,
+    );
 
     Ok(canvas)
 }
