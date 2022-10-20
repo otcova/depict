@@ -34,7 +34,7 @@ impl Depict {
         })
     }
 
-    pub fn draw_loop<F: FnMut(&Self, &mut Draw) + 'static>(mut self, mut f: F) -> Result<()> {
+    pub fn draw_loop<F: FnMut(&Self, &mut Draw) + 'static>(self, mut f: F) -> Result<()> {
         let mut draw = Draw::new(&self.gl)?;
 
         let t = self.time.clone();
@@ -59,9 +59,9 @@ impl Depict {
     fn calc_size(gl: &WebGl) -> Vec2 {
         let pixels = (gl.width(), gl.height());
         if pixels.0 > pixels.1 {
-            vec2![1., pixels.1 / pixels.0]
-        } else {
             vec2![pixels.0 / pixels.1, 1.]
+        } else {
+            vec2![1., pixels.1 / pixels.0]
         }
     }
 

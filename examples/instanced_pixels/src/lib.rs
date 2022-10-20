@@ -9,7 +9,7 @@ fn draw(app: &Depict, draw: &mut Draw) {
     for x in (-N as i32)..=(N as i32) {
         for y in (-N as i32)..=(N as i32) {
             draw.rect()
-                .translate([x as f32 / N, y as f32 / N])
+                .xy([x as f32 / N, y as f32 / N])
                 .scale(1. / N)
                 .rgb([
                     1. * (app.seconds() * 10. + x as f32 / 10.).sin(),

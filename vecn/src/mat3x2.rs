@@ -1,6 +1,7 @@
 use crate::*;
 use std::{
     f32::consts::PI,
+    ops::Mul,
     ops::{Deref, DerefMut},
 };
 
@@ -17,13 +18,10 @@ impl<V: Into<Vec2>> From<V> for Mat3x2 {
 #[macro_export]
 macro_rules! mat3x2 {
     () => {
-        Mat3x2(1.)
+        Mat3x2([1., 0., 0., 1., 0., 0.])
     };
     ($m: expr) => {
         Mat3x2::from($m)
-    };
-    ($a: expr, $b: expr, $c: expr, $d: expr, $e: expr, $f: expr) => {
-        Mat3x2([$a, $b, $c, $d, $e, $f])
     };
 }
 
@@ -73,5 +71,33 @@ impl Mat3x2 {
         self.0[0] *= vec.x;
         self.0[3] *= vec.y;
         self
+    }
+
+    pub fn apply(&mut self, transform: &Mat3x2) -> &mut Self {
+        let m00 = self.0[0];
+        let m10 = self.0[1];
+        let m01 = self.0[2];
+        let m11 = self.0[3];
+        let m02 = self.0[4];
+        let m12 = self.0[5];
+
+        self.0[0] = m00 * transform.0[0] + m01 * transform.0[1];
+        self.0[1] = m10 * transform.0[0] + m11 * transform.0[1];
+        self.0[2] = m00 * transform.0[2] + m01 * transform.0[3];
+        self.0[3] = m10 * transform.0[2] + m11 * transform.0[3];
+        self.0[4] = m00 * transform.0[4] + m01 * transform.0[5] + m02;
+        self.0[5] = m10 * transform.0[4] + m11 * transform.0[5] + m12;
+
+        self
+    }
+}
+
+impl Mul<Vec2> for &Mat3x2 {
+    type Output = Vec2;
+    fn mul(self, rhs: Vec2) -> Self::Output {
+        vec2![
+            self.0[0] * rhs.x + self.0[2] * rhs.y + self.0[4],
+            self.0[1] * rhs.x + self.0[3] * rhs.y + self.0[5],
+        ]
     }
 }
