@@ -8,7 +8,7 @@ pub trait Rgb {
     fn rgb<V: Into<Vec3>>(&mut self, color: V) -> &mut Self {
         *self.mut_rgb() = color.into();
         self
-    }    
+    }
 }
 
 pub trait Transform2D {

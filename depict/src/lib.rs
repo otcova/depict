@@ -1,8 +1,12 @@
+// #![feature(impl)]
 pub mod console;
 mod draw;
 mod request_frame;
 mod setup;
 mod time;
+mod web;
+
+use std::{cell::RefCell, rc::Rc};
 
 pub use draw::*;
 pub use vecn::*;
@@ -17,7 +21,7 @@ type Result<T> = std::result::Result<T, String>;
 pub struct Depict {
     gl: WebGl,
     size: Vec2,
-    chrono: Chrono,
+    time: Rc<RefCell<FrameTime>>,
 }
 
 impl Depict {
@@ -25,20 +29,26 @@ impl Depict {
         let gl = WebGl::new()?;
         Ok(Self {
             size: Self::calc_size(&gl),
-            chrono: Chrono::default(),
+            time: Rc::new(RefCell::new(FrameTime::new())),
             gl,
         })
     }
 
     pub fn draw_loop<F: FnMut(&Self, &mut Draw) + 'static>(mut self, mut f: F) -> Result<()> {
         let mut draw = Draw::new(&self.gl)?;
-        self.chrono = Chrono::default();
+
+        let t = self.time.clone();
+        web::add_event_listener("visibilitychange", move || {
+            if web::Document::visibility_state() == "hidden" {
+                t.borrow_mut().pause_time()
+            }
+        });
 
         start_animation_loop(move || {
+            self.time.borrow_mut().start_frame();
             f(&self, &mut draw);
             draw.draw(&self);
-
-            self.chrono.update();
+            self.time.borrow_mut().end_frame();
         });
 
         Ok(())
@@ -57,9 +67,5 @@ impl Depict {
 
     pub fn size(&self) -> Vec2 {
         self.size
-    }
-
-    pub fn seconds(&self) -> f32 {
-        self.chrono.seconds()
     }
 }

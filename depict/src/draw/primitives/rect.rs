@@ -17,14 +17,16 @@ pub struct Rect<'a> {
 impl Draw {
     pub fn rect(&mut self) -> Rect {
         self.z_index += 1.;
-       self.rect.instantiate(self.z_index)
+        self.rect.instantiate(self.z_index)
     }
 }
 
 impl RectMesh {
     pub(crate) fn new(gl: &WebGl) -> Result<Self> {
         let mut vertices = gl.new_array_buffer(VERTICES_ATTRIBS)?;
-        vertices.update_f32(&[0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5]);
+        vertices.update_f32(&[
+            0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5,
+        ]);
         let instances = gl.new_array_buffer(INSTANCES_ATTRIBS)?;
         let mesh = gl.instanced_mesh_from_verts(&vertices, &instances)?;
         let shader = gl.new_shader(VERTEX_SHADER, FRAGMENT_SHADER)?;
@@ -47,7 +49,8 @@ impl RectMesh {
 
     pub fn draw(&mut self, app: &Depict) {
         self.instances.update_f32(&self.instances_buffer);
-        self.shader.set_uniform("screen_size", Uniform::Vec2F32(&*app.size()));
+        self.shader
+            .set_uniform("screen_size", Uniform::Vec2F32(&*app.size()));
         self.mesh.draw(&self.shader);
 
         self.instances_buffer.truncate(0);

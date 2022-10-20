@@ -46,7 +46,7 @@ pub fn setup() -> Result<(), String> {
 
     let draw_frame = move || {
         time.start_frame();
-        
+
         const N: f32 = 500.;
         for x in (-N as i32)..=(N as i32) {
             for y in (-N as i32)..=(N as i32) {
