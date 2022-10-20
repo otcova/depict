@@ -1,11 +1,17 @@
 use depict::*;
 
-setup!();
+start_model!(draw);
 
-fn draw(app: &Depict, draw: &mut Draw) {
-    draw.rect()
-        .rotate_deg(app.seconds() * 30.)
-        .xy([0.5, 0.0])
-        .rotate_deg(app.seconds() * 30.)
-        .rgb([app.seconds().sin(), 0.8, 1.]);
+struct Model {
+    cute_cat: Image,
+}
+
+impl Model {
+    fn new(app: &Depict) -> Model {
+        Self { cute_cat: app.load_image("./some_image.png") }
+    }
+
+    fn draw(&self, app: &Depict, draw: &mut Draw) {
+        draw.image(self.cute_cat).scale(app.seconds().sin());
+    }
 }
