@@ -1,6 +1,6 @@
 use depict::*;
 
-setup!();
+start_loop!(draw);
 
 fn draw(app: &Depict, draw: &mut Draw) {
     log!("dt: {}ms", app.average_delta_seconds() * 1000.);

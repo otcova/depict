@@ -1,4 +1,3 @@
-// #![feature(impl)]
 pub mod console;
 mod draw;
 mod request_frame;

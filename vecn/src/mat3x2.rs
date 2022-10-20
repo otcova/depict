@@ -97,7 +97,7 @@ impl Mul<Vec2> for &Mat3x2 {
     fn mul(self, rhs: Vec2) -> Self::Output {
         vec2![
             self.0[0] * rhs.x + self.0[2] * rhs.y + self.0[4],
-            self.0[1] * rhs.x + self.0[3] * rhs.y + self.0[5],
+            self.0[1] * rhs.x + self.0[3] * rhs.y + self.0[5]
         ]
     }
 }
