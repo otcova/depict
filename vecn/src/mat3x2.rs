@@ -6,6 +6,7 @@ use std::{
 };
 
 /// Column major matrix
+#[derive(Copy, Clone)]
 pub struct Mat3x2(pub [f32; 6]);
 
 impl<V: Into<Vec2>> From<V> for Mat3x2 {

@@ -1,6 +1,7 @@
 use crate::*;
 use std::ops::{Deref, DerefMut};
 
+#[derive(Copy, Clone)]
 pub struct Mat2(pub [f32; 4]);
 
 impl<V: Into<Vec2>> From<V> for Mat2 {

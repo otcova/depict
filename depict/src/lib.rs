@@ -5,14 +5,12 @@ mod setup;
 mod time;
 mod web;
 
-use std::{cell::RefCell, rc::Rc};
-
 pub use draw::*;
 pub use vecn::*;
 pub use wasm_bindgen;
 
 use request_frame::*;
-use time::*;
+pub use time::*;
 use webgl::*;
 
 type Result<T> = std::result::Result<T, String>;
@@ -20,7 +18,7 @@ type Result<T> = std::result::Result<T, String>;
 pub struct Depict {
     gl: WebGl,
     size: Vec2,
-    time: Rc<RefCell<FrameTime>>,
+    time: FrameTime,
 }
 
 impl Depict {
@@ -28,26 +26,26 @@ impl Depict {
         let gl = WebGl::new()?;
         Ok(Self {
             size: Self::calc_size(&gl),
-            time: Rc::new(RefCell::new(FrameTime::new())),
+            time: FrameTime::new(),
             gl,
         })
     }
 
-    pub fn draw_loop<F: FnMut(&Self, &mut Draw) + 'static>(self, mut f: F) -> Result<()> {
+    pub fn draw_loop<F: FnMut(&Self, &mut Draw) + 'static>(mut self, mut f: F) -> Result<()> {
         let mut draw = Draw::new(&self.gl)?;
 
-        let t = self.time.clone();
+        let time_handle = self.time.pause_handle();
         web::add_event_listener("visibilitychange", move || {
             if web::Document::visibility_state() == "hidden" {
-                t.borrow_mut().pause_time()
+                time_handle.pause_time();
             }
         });
 
         start_animation_loop(move || {
-            self.time.borrow_mut().start_frame();
+            self.time.start_frame();
             f(&self, &mut draw);
             draw.draw(&self);
-            self.time.borrow_mut().end_frame();
+            self.time.end_frame();
         });
 
         Ok(())

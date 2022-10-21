@@ -1,5 +1,7 @@
 mod chrono;
-use chrono::*;
+use std::{cell::RefCell, rc::Rc};
+
+pub use chrono::*;
 
 use crate::Depict;
 
@@ -39,8 +41,12 @@ impl<const N: usize> Average<N> {
     }
 }
 
+pub struct PauseFrameTime {
+    pause_chrono: Rc<RefCell<Option<Chrono>>>,
+}
+
 pub struct FrameTime {
-    pause_chrono: Option<Chrono>,
+    pause_chrono: Rc<RefCell<Option<Chrono>>>,
     frame_chrono: Chrono,
     frame_count: f32,
     render_seconds: Average<60>,
@@ -51,7 +57,7 @@ pub struct FrameTime {
 impl FrameTime {
     pub fn new() -> Self {
         Self {
-            pause_chrono: None,
+            pause_chrono: Rc::new(RefCell::new(None)),
             frame_chrono: Chrono::start(),
             frame_count: 0.,
             render_seconds: Average::new(),
@@ -78,36 +84,43 @@ impl FrameTime {
         self.render_seconds.push(self.frame_chrono.seconds());
     }
 
-    pub fn pause_time(&mut self) {
-        if self.pause_chrono.is_none() {
-            self.pause_chrono = Some(Chrono::start());
+    pub fn pause_handle(&self) -> PauseFrameTime {
+        PauseFrameTime {
+            pause_chrono: self.pause_chrono.clone(),
+        }
+    }
+}
+impl PauseFrameTime {
+    pub fn pause_time(&self) {
+        if self.pause_chrono.borrow().is_none() {
+            *self.pause_chrono.borrow_mut() = Some(Chrono::start());
         }
     }
 }
 
 impl Depict {
     pub fn frame_count(&self) -> f32 {
-        self.time.borrow().frame_count
+        self.time.frame_count
     }
     pub fn seconds(&self) -> f32 {
-        self.time.borrow().seconds
+        self.time.seconds
     }
     pub fn render_seconds(&self) -> f32 {
-        self.time.borrow().render_seconds.current()
+        self.time.render_seconds.current()
     }
     pub fn average_render_seconds(&self) -> f32 {
-        self.time.borrow().render_seconds.average()
+        self.time.render_seconds.average()
     }
     pub fn delta_seconds(&self) -> f32 {
-        self.time.borrow().delta_seconds.current()
+        self.time.delta_seconds.current()
     }
     pub fn average_delta_seconds(&self) -> f32 {
-        self.time.borrow().delta_seconds.average()
+        self.time.delta_seconds.average()
     }
     pub fn fps(&self) -> f32 {
-        1. / self.time.borrow().delta_seconds.current()
+        1. / self.time.delta_seconds.current()
     }
     pub fn average_fps(&self) -> f32 {
-        1. / self.time.borrow().delta_seconds.average()
+        1. / self.time.delta_seconds.average()
     }
 }

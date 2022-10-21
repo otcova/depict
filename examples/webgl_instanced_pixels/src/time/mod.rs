@@ -8,6 +8,7 @@ pub struct Average<const N: usize> {
     average: f32,
 }
 
+#[allow(dead_code)]
 impl<const N: usize> Average<N> {
     pub fn new() -> Self {
         Self {
