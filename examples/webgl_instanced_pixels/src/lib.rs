@@ -48,9 +48,9 @@ pub fn setup() -> Result<(), String> {
         time.start_frame();
 
         const N: f32 = 500.;
-        
+
         let draw_time = time.seconds * 10.;
-        
+
         for x in (-N as i32)..=(N as i32) {
             for y in (-N as i32)..=(N as i32) {
                 let data = [

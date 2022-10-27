@@ -8,7 +8,9 @@ struct Model {
 
 impl Model {
     fn new(app: &Depict) -> Model {
-        Self { cute_cat: app.load_image("./some_image.png") }
+        Self {
+            cute_cat: app.load_image("./some_image.png"),
+        }
     }
 
     fn draw(&self, app: &Depict, draw: &mut Draw) {
